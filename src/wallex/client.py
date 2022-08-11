@@ -1,9 +1,9 @@
 from pydantic import validate_arguments
-from wallex.request import RequestsApi
-from wallex.schema import MarketsResponseModel, CurrenciesResponseModel, MarketOrderDetailModel, ClientSymbolInput, \
+from src.wallex.request import RequestsApi
+from src.wallex.schema import MarketsResponseModel, CurrenciesResponseModel, MarketOrderDetailModel, ClientSymbolInput, \
     MarketTradesModel, MarketCandlesRequestModel, MarketCandlesResponseModel, AccountFeeLevelsResponseModel, \
     AccountBalancesResponseModel, PlaceOrderRequestModel, PlaceOrderResponseModel, LastTradesResponseModel
-from wallex.utils import create_list_by_symbol, create_list
+from src.wallex.utils import create_list_by_symbol, create_list
 
 
 class WallexClient:

@@ -1,6 +1,6 @@
 import os
 import pytest
-from wallex.client import WallexClient
+from src.wallex.client import WallexClient
 
 
 def test_init_client_with_api_key():
