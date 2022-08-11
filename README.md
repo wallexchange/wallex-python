@@ -1,2 +1,2 @@
 # wallex-python
-Python Client for Wallex Exchange API
+wallex unofficial  python client
