@@ -1,4 +1,4 @@
-Wallex-python v.0.0.5
+Wallex-python v.0.0.6
 ===========================================================
 
 ## Wallex Python SDK
