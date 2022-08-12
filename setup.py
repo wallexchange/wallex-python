@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="wallex-python",
-    version="0.0.1",
+    version="0.0.2",
     author="Pourya Moghadam",
     author_email="p.moghadam@msn.com",
     description="Wallex Exchange Unofficial API Python Client",
@@ -15,7 +15,7 @@ setuptools.setup(
     url="https://github.com/wallexchange/wallex-python",
     license="MIT",
     keywords='wallex exchange api bitcoin ethereum btc eth python',
-    dependencies=['pydantic', 'requests'],
+    install_requires=['pydantic', 'requests'],
     project_urls={
         "Bug Tracker": "https://github.com/wallexchange/wallex-python/issues",
         "Documentation": "https://api-docs.wallex.ir/",

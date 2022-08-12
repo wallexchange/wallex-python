@@ -1,5 +1,5 @@
 import requests
-from src.wallex.utils import error_handler
+from wallex.utils import error_handler
 
 
 class RequestsApi:
