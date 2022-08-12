@@ -15,6 +15,7 @@ setuptools.setup(
     url="https://github.com/wallexchange/wallex-python",
     license="MIT",
     keywords='wallex exchange api bitcoin ethereum btc eth python',
+    dependencies=['pydantic', 'requests'],
     project_urls={
         "Bug Tracker": "https://github.com/wallexchange/wallex-python/issues",
         "Documentation": "https://api-docs.wallex.ir/",

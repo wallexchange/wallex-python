@@ -6,7 +6,7 @@ from src.wallex.schema import MarketsResponseModel, CurrenciesResponseModel, Mar
 from src.wallex.utils import create_list_by_symbol, create_list
 
 
-class WallexClient:
+class Client:
     """
     :param api_key: str = Wallex API key (required)
     :method host_is_online: bool = Returns True if Wallex API is online
