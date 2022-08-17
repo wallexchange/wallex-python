@@ -6,8 +6,10 @@ from wallex.schema import MarketsResponseModel, CurrenciesResponseModel, MarketO
     AccountBalancesResponseModel, PlaceOrderRequestModel, PlaceOrderResponseModel, LastTradesResponseModel
 from wallex.utils import create_list_by_symbol, create_list
 
+from wallex._base_client import _Base
 
-class AsyncClient:
+
+class AsyncClient(_Base):
     """
     :param api_key: str = Wallex API key (required)
     :method host_is_online: bool = Returns True if Wallex API is online
@@ -17,9 +19,8 @@ class AsyncClient:
 
     @validate_arguments
     def __init__(self, api_key: str, loop=None) -> None:
-        self.client_user = None
         self.loop = loop
-        self.consumer = AsyncRequestsApi(
+        self._consumer = AsyncRequestsApi(
             base_url='https://api.wallex.ir',
             headers={"X-API-Key": api_key},
             loop=loop
@@ -39,19 +40,19 @@ class AsyncClient:
         return self
 
     async def get_markets(self):
-        res = await self.consumer.get('/v1/markets')
+        res = await self._consumer.get('/v1/markets')
         json_res = await res.json()
         symbols = json_res['result']['symbols']
         return create_list_by_symbol(symbols, MarketsResponseModel)
 
     async def get_currencies(self):
-        res = await self.consumer.get('/v1/currencies/stats')
+        res = await self._consumer.get('/v1/currencies/stats')
         json_res = await res.json()
         return create_list(json_res['result'], CurrenciesResponseModel)
 
     async def get_market_orders(self, symbol: str):
         params = ClientSymbolInput(symbol=symbol)
-        res = await self.consumer.get('/v1/depth', params=params.dict())
+        res = await self._consumer.get('/v1/depth', params=params.dict())
         json_res = await res.json()
         return {
             'ask': create_list(json_res['result']['ask'], MarketOrderDetailModel),
@@ -60,7 +61,7 @@ class AsyncClient:
 
     async def get_market_trades(self, symbol: str):
         params = ClientSymbolInput(symbol=symbol)
-        res = await self.consumer.get('/v1/trades?', params=params.dict())
+        res = await self._consumer.get('/v1/trades?', params=params.dict())
         json_res = await res.json()
         return {
             'latestTrades': create_list(json_res['result']['latestTrades'], MarketTradesModel)
@@ -68,7 +69,7 @@ class AsyncClient:
 
     async def get_market_candles(self, symbol: str, resolution: str, _from, _to):
         params = MarketCandlesRequestModel(symbol=symbol, resolution=resolution, start_time=_from, end_time=_to).dict()
-        res = await self.consumer.get('/v1/udf/history?', params={
+        res = await self._consumer.get('/v1/udf/history?', params={
             'symbol': params['symbol'],
             'resolution': params['resolution'],
             'from': int(round(params['start_time'].timestamp())),
@@ -79,30 +80,30 @@ class AsyncClient:
         return checked_r.dict()
 
     async def get_profile(self):
-        res = await self.consumer.get('/v1/account/profile')
+        res = await self._consumer.get('/v1/account/profile')
         json_res = await res.json()
         return json_res['result']
 
     async def get_fee_levels(self):
-        res = await self.consumer.get('/v1/account/fee')
+        res = await self._consumer.get('/v1/account/fee')
         json_res = await res.json()
         return create_list_by_symbol(json_res['result'], AccountFeeLevelsResponseModel)
 
     # TODO: get 401 auth error when calling this method
     async def get_banking_cards(self):
-        res = await self.consumer.get('/v1/account/card-numbers')
+        res = await self._consumer.get('/v1/account/card-numbers')
         json_res = await res.json()
         return json_res['result']
 
     # TODO: get 500 server error when calling this method
     async def get_banking_accounts(self):
-        res = await self.consumer.get('/v1/account/ibans')
+        res = await self._consumer.get('/v1/account/ibans')
         json_res = await res.json()
         return json_res['result']
 
     async def get_balances(self):
         temp_balances = {}
-        res = await self.consumer.get('/v1/account/balances')
+        res = await self._consumer.get('/v1/account/balances')
         json_res = await res.json()
         balances = create_list_by_symbol(json_res['result']['balances'], AccountBalancesResponseModel)
         for balance in balances:
@@ -112,12 +113,12 @@ class AsyncClient:
         }
 
     async def get_crypto_withdrawal_list(self):
-        res = await self.consumer.get('/v1/account/crypto-withdrawal')
+        res = await self._consumer.get('/v1/account/crypto-withdrawal')
         json_res = await res.json()
         return json_res['result']
 
     async def get_crypto_deposit_list(self):
-        res = await self.consumer.get('/v1/account/crypto-deposit')
+        res = await self._consumer.get('/v1/account/crypto-deposit')
         json_res = await res.json()
         return json_res['result']
 
@@ -128,31 +129,31 @@ class AsyncClient:
             symbol=symbol, order_type=order_type, side=side,
             quantity=quantity, price=price, client_id=client_id
         ).dict(exclude_none=True)
-        res = await self.consumer.post('/v1/account/orders', json=params)
+        res = await self._consumer.post('/v1/account/orders', json=params)
         json_res = await res.json()
         return PlaceOrderResponseModel(**json_res['result']).dict()
 
     @validate_arguments
     async def get_order_detail(self, order_id: str):
-        res = await self.consumer.get('/v1/account/orders/' + order_id)
+        res = await self._consumer.get('/v1/account/orders/' + order_id)
         json_res = await res.json()
         return PlaceOrderResponseModel(**json_res['result']).dict()
 
     @validate_arguments
     async def cancel_order(self, order_id: str):
-        res = await self.consumer.delete('/v1/account/orders/' + order_id)
+        res = await self._consumer.delete('/v1/account/orders/' + order_id)
         json_res = await res.json()
         return json_res['result']
 
     @validate_arguments
     async def get_open_orders(self, symbol: str = None):
-        res = await self.consumer.get('/v1/account/openOrders', params={'symbol': symbol})
+        res = await self._consumer.get('/v1/account/openOrders', params={'symbol': symbol})
         json_res = await res.json()
         return json_res['result']
 
     @validate_arguments
     async def get_trades(self, symbol: str = None, side: str = None):
-        res = await self.consumer.get('/v1/account/trades', params={'symbol': symbol, 'side': side})
+        res = await self._consumer.get('/v1/account/trades', params={'symbol': symbol, 'side': side})
         json_res = await res.json()
         last_trades = create_list(json_res['result']['AccountLatestTrades'], LastTradesResponseModel)
         return {
@@ -160,4 +161,4 @@ class AsyncClient:
         }
 
     async def close(self):
-        return await self.consumer.close()
+        return await self._consumer.close()
