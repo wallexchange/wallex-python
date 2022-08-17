@@ -1,12 +1,25 @@
-from typing import Any
+from typing import Callable, Awaitable
+
+from requests import Response
+from aiohttp import ClientResponse
 
 
-def error_handler(func: Any) -> Any:
+def error_handler(func: Callable[[...], Response]) -> ...:
     def wrapper(*args, **kwargs):
-        response = func(*args, **kwargs)
+        response: Response = func(*args, **kwargs)
         accepted_status_codes = [200, 201, 202, 204]
         if response.status_code not in accepted_status_codes:
             raise Exception('call api error', response.json())
+        return response
+    return wrapper
+
+
+def async_error_handler(func: Callable[[...], Awaitable[ClientResponse]]) -> ...:
+    async def wrapper(*args, **kwargs):
+        response: ClientResponse = await func(*args, **kwargs)
+        accepted_status_codes = [200, 201, 202, 204]
+        if response.status not in accepted_status_codes:
+            raise Exception('call api error', await response.json())
         return response
     return wrapper
 
