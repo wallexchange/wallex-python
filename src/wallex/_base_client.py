@@ -2,6 +2,12 @@ from abc import ABC, abstractmethod
 
 
 class _Base(ABC):
+    ORDER_TYPE_LIMIT = 'LIMIT'
+    ORDER_TYPE_MARKET = 'MARKET'
+
+    ORDER_SIDE_BUY = 'BUY'
+    ORDER_SIDE_SELL = 'SELL'
+
     @abstractmethod
     def get_markets(self):
         raise NotImplementedError
@@ -70,4 +76,28 @@ class _Base(ABC):
 
     @abstractmethod
     def get_trades(self, symbol: str = None, side: str = None):
+        raise NotImplementedError
+
+    @abstractmethod
+    def order_market(self, symbol: str, side: str, quantity: float, client_id: str = None):
+        raise NotImplementedError
+
+    @abstractmethod
+    def order_limit(self, symbol: str, side: str, quantity: float, price: float, client_id: str = None):
+        raise NotImplementedError
+
+    @abstractmethod
+    def order_market_buy(self, symbol: str, quantity: float, client_id: str = None):
+        raise NotImplementedError
+
+    @abstractmethod
+    def order_market_sell(self, symbol: str, quantity: float, client_id: str = None):
+        raise NotImplementedError
+
+    @abstractmethod
+    def order_limit_buy(self, symbol: str, quantity: float, price: float, client_id: str = None):
+        raise NotImplementedError
+
+    @abstractmethod
+    def order_limit_sell(self, symbol: str, quantity: float, price: float, client_id: str = None):
         raise NotImplementedError

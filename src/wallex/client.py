@@ -102,12 +102,43 @@ class Client(_Base):
 
     def place_order(self,
                     symbol: str, order_type: str, side: str,
-                    quantity: float, price: float, client_id: str = None):
+                    quantity: float, price: float = None, client_id: str = None):
         params = PlaceOrderRequestModel(symbol=symbol, order_type=order_type, side=side,
                                         quantity=quantity, price=price, client_id=client_id
                                         ).dict(exclude_none=True)
         res = self._consumer.post('/v1/account/orders', json=params)
         return PlaceOrderResponseModel(**res.json()['result']).dict()
+
+    def order_market(self, symbol: str, side: str, quantity: float, client_id: str = None):
+        return self.place_order(
+            symbol=symbol, order_type=self.ORDER_TYPE_MARKET, side=side, quantity=quantity, client_id=client_id
+        )
+
+    def order_limit(self, symbol: str, side: str, quantity: float, price: float, client_id: str = None):
+        return self.place_order(
+            symbol=symbol, order_type=self.ORDER_TYPE_LIMIT, side=side,
+            quantity=quantity, price=price, client_id=client_id
+        )
+
+    def order_market_buy(self, symbol: str, quantity: float, client_id: str = None):
+        return self.order_market(
+            symbol=symbol, side=self.ORDER_SIDE_BUY, quantity=quantity, client_id=client_id
+        )
+
+    def order_market_sell(self, symbol: str, quantity: float, client_id: str = None):
+        return self.order_market(
+            symbol=symbol, side=self.ORDER_SIDE_SELL, quantity=quantity, client_id=client_id
+        )
+
+    def order_limit_buy(self, symbol: str, quantity: float, price: float, client_id: str = None):
+        return self.order_limit(
+            symbol=symbol, side=self.ORDER_SIDE_BUY, quantity=quantity, price=price, client_id=client_id
+        )
+
+    def order_limit_sell(self, symbol: str, quantity: float, price: float, client_id: str = None):
+        return self.order_limit(
+            symbol=symbol, side=self.ORDER_SIDE_SELL, quantity=quantity, price=price, client_id=client_id
+        )
 
     @validate_arguments
     def get_order_detail(self, order_id: str):

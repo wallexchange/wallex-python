@@ -149,7 +149,7 @@ class PlaceOrderRequestModel(BaseModel):
     type: str = 'LIMIT' or 'MARKET'
     side: str = 'BUY' or 'SELL'
     quantity: float
-    price: float
+    price: float = None
     client_id: str = None
 
     class Config:
