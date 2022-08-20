@@ -1,8 +1,39 @@
+from abc import ABC, abstractmethod
+
 import requests
+import aiohttp
+
 from wallex.utils import error_handler
+from wallex.utils import async_error_handler
 
 
-class RequestsApi:
+class _Base(ABC):
+    @abstractmethod
+    def get(self, url, **kwargs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def post(self, url, **kwargs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def put(self, url, **kwargs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def patch(self, url, **kwargs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete(self, url, **kwargs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def close(self):
+        raise NotImplementedError
+
+
+class RequestsApi(_Base):
     def __init__(self, base_url, **kwargs):
         self.base_url = base_url
         self.session = requests.Session()
@@ -40,3 +71,35 @@ class RequestsApi:
             else:
                 destination[key] = value
         return destination
+
+    def close(self):
+        self.session.close()
+
+
+class AsyncRequestsApi(_Base):
+    def __init__(self, base_url, **kwargs):
+        self.base_url = base_url
+        self.session = aiohttp.ClientSession(**kwargs)
+
+    @async_error_handler
+    async def get(self, url, **kwargs):
+        return await self.session.get(self.base_url + url, **kwargs)
+
+    @async_error_handler
+    async def post(self, url, **kwargs):
+        return await self.session.post(self.base_url + url, **kwargs)
+
+    @async_error_handler
+    async def put(self, url, **kwargs):
+        return await self.session.put(self.base_url + url, **kwargs)
+
+    @async_error_handler
+    async def patch(self, url, **kwargs):
+        return await self.session.patch(self.base_url + url, **kwargs)
+
+    @async_error_handler
+    async def delete(self, url, **kwargs):
+        return await self.session.delete(self.base_url + url, **kwargs)
+
+    async def close(self):
+        await self.session.close()

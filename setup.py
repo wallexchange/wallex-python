@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="wallex-python",
-    version="0.0.6",
+    version="0.0.9",
     author="Pourya Moghadam",
     author_email="p.moghadam@msn.com",
     description="Wallex Exchange Unofficial API Python Client",
